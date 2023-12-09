@@ -25,6 +25,11 @@ git log --online
 git checkout <branch_name>
 ```
 
+#### Восстановить подготовленный файл рабочего дерева можно параметром reset
+```sh
+git reset HEAD <branch_name>
+```
+
 #### Проверка статуса репозитория
 ```sh
 git status
