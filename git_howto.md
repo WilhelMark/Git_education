@@ -49,3 +49,8 @@ git branch
 ```sh
 git checkout <branch_name>
 ```
+
+#### Удаление ветки
+```sh
+git branch -d <branch_name>
+```
