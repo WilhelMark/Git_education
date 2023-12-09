@@ -34,3 +34,8 @@ git status
 ```sh
 git diff
 ```
+
+#### Просмотр списка веток
+```sh
+git branch
+```
