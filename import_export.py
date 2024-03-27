@@ -1,3 +1,5 @@
+import os
+
 class ImportExportManager:
     def __init__(self):
         pass
@@ -10,8 +12,12 @@ class ImportExportManager:
 
     def import_contacts(self, filename):
         # Импорт контактов из файла
-        imported_contacts = []
-        with open(filename, 'r') as file:
-            for line in file:
-                imported_contacts.append(line.strip())
-        return imported_contacts
+        if os.path.exists(filename):
+            imported_contacts = []
+            with open(filename, 'r') as file:
+                for line in file:
+                    imported_contacts.append(line.strip())
+            return imported_contacts
+        else:
+            print(f"Файл '{filename}' не найден.")
+            return []
