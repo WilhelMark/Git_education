@@ -1,8 +1,6 @@
-# main.py
-
 import tkinter as tk
-from gui import PhonebookGUI # Модуль для создания графического интерфейса.
-from data_handler import PhonebookDataHandler # Модуль для работы с данными (CRUD операции)
+from gui import PhonebookGUI 
+from data_handler import PhonebookDataHandler 
 
 def main():
     root = tk.Tk()
