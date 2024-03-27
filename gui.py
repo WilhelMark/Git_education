@@ -8,6 +8,7 @@ class PhonebookGUI(tk.Frame):
         self.import_export_manager = import_export_manager
 
         self.create_widgets()
+        self.create_menu()  # Создание меню
 
     def create_widgets(self):
         # Создание элементов GUI
@@ -31,6 +32,31 @@ class PhonebookGUI(tk.Frame):
 
         self.delete_button = tk.Button(self, text="Удалить контакт", command=self.delete_contact)
         self.delete_button.pack()
+
+    def create_menu(self):
+        # Создание меню
+        self.menu_bar = tk.Menu(self.master)
+        self.master.config(menu=self.menu_bar)
+
+        file_menu = tk.Menu(self.menu_bar, tearoff=0)
+        file_menu.add_command(label="Экспорт контактов", command=self.export_contacts)
+        file_menu.add_command(label="Импорт контактов", command=self.import_contacts)
+        file_menu.add_separator()
+        file_menu.add_command(label="Выход", command=self.master.quit)
+
+        self.menu_bar.add_cascade(label="Файл", menu=file_menu)
+
+    def export_contacts(self):
+        # Логика экспорта контактов
+        contacts = self.data_handler.get_all_contacts()
+        self.import_export_manager.export_contacts("contacts.txt", contacts)
+
+    def import_contacts(self):
+        # Логика импорта контактов
+        imported_contacts = self.import_export_manager.import_contacts("contacts.txt")
+        for contact in imported_contacts:
+            self.data_handler.add_contact(contact)
+        self.update_contact_list()
 
     def search_contacts(self):
         # Логика поиска контактов
@@ -131,3 +157,10 @@ class PhonebookGUI(tk.Frame):
         self.data_handler.update_contact(contact_id, edited_contact)
         edit_window.destroy()  # Закрыть окно редактирования контакта после сохранения
         # Реализация логики сохранения отредактированного контакта
+
+    def update_contact_list(self):
+        # Обновление списка контактов в GUI
+        self.contact_listbox.delete(0, tk.END)
+        contacts = self.data_handler.get_all_contacts()
+        for contact in contacts:
+            self.contact_listbox.insert(tk.END, contact)
