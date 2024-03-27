@@ -1,5 +1,3 @@
-# gui.py
-
 import tkinter as tk
 
 class PhonebookGUI(tk.Frame):
