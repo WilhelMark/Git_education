@@ -46,6 +46,12 @@ class PhonebookGUI(tk.Frame):
 
         self.menu_bar.add_cascade(label="Файл", menu=file_menu)
 
+        contact_menu = tk.Menu(self.menu_bar, tearoff=0)
+        contact_menu.add_command(label="Добавить контакт", command=self.show_add_contact_window)
+        contact_menu.add_command(label="Просмотр контактов", command=self.show_contact_view_window)
+
+        self.menu_bar.add_cascade(label="Контакты", menu=contact_menu)
+
     def export_contacts(self):
         # Логика экспорта контактов
         contacts = self.data_handler.get_all_contacts()
