@@ -36,5 +36,9 @@ class DatabaseManager:
                                WHERE id = ?''', (updated_contact['name'], updated_contact['phone_number'], updated_contact['email'], updated_contact['job_title'], updated_contact['company'], contact_id))
         self.connection.commit()
 
+    def save_contacts(self, contacts):
+        for contact in contacts:
+            self.add_contact(contact)
+
     def close_connection(self):
         self.connection.close()
