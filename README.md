@@ -27,9 +27,9 @@ python main.py
 ```
 
 ## Зависимости
-Python 3.x
-sqlite3
-tkinter
+* Python 3.x
+* sqlite3
+* tkinter
 
 ## Использование
 
