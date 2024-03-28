@@ -1,30 +1,17 @@
-class PhonebookDataStorage:
-    def __init__(self):
-        self.contacts = []
+import json
 
-    def add_contact(self, contact):
-        # Добавление нового контакта
-        self.contacts.append(contact)
+class DataStorage:
+    def __init__(self, file_name):
+        self.file_name = file_name
 
-    def delete_contact(self, contact_id):
-        # Удаление контакта по ID
-        for contact in self.contacts:
-            if contact.get("id") == contact_id:
-                self.contacts.remove(contact)
-                break
+    def save_data(self, data):
+        with open(self.file_name, 'w') as file:
+            json.dump(data, file)
 
-    def get_all_contacts(self):
-        # Получение всех контактов
-        return self.contacts
-
-    def update_contact(self, contact_id, updated_contact):
-        # Обновление контакта по ID
-        for contact in self.contacts:
-            if contact.get("id") == contact_id:
-                contact.update(updated_contact)
-                break
-
-    def merge_contacts(self, contact1, contact2):
-        # Слияние двух контактов
-        merged_contact = {**contact1, **contact2}
-        return merged_contact
+    def load_data(self):
+        try:
+            with open(self.file_name, 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = []
+        return data
