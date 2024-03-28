@@ -74,33 +74,17 @@ class PhonebookGUI(tk.Frame):
         add_window = tk.Toplevel(self.master)
         add_window.title("Добавить контакт")
 
-        # Создание полей для ввода данных контакта
-        name_label = tk.Label(add_window, text="Имя:")
-        name_label.pack()
-        name_entry = tk.Entry(add_window)
-        name_entry.pack()
+        fields = ["Имя", "Номер телефона", "Email", "Должность", "Компания"]
+        entries = []
 
-        phone_label = tk.Label(add_window, text="Номер телефона:")
-        phone_label.pack()
-        phone_entry = tk.Entry(add_window)
-        phone_entry.pack()
+        for field in fields:
+            label = tk.Label(add_window, text=field + ":")
+            label.pack()
+            entry = tk.Entry(add_window)
+            entry.pack()
+            entries.append(entry)
 
-        email_label = tk.Label(add_window, text="Email:")
-        email_label.pack()
-        email_entry = tk.Entry(add_window)
-        email_entry.pack()
-
-        job_label = tk.Label(add_window, text="Должность:")
-        job_label.pack()
-        job_entry = tk.Entry(add_window)
-        job_entry.pack()
-
-        company_label = tk.Label(add_window, text="Компания:")
-        company_label.pack()
-        company_entry = tk.Entry(add_window)
-        company_entry.pack()
-
-        save_button = tk.Button(add_window, text="Сохранить", command=lambda: self.save_contact(name_entry.get(), phone_entry.get(), email_entry.get(), job_entry.get(), company_entry.get(), add_window))
+        save_button = tk.Button(add_window, text="Сохранить", command=lambda: self.save_contact([entry.get() for entry in entries], add_window))
         save_button.pack()
 
     def show_edit_contact_window(self):
@@ -109,60 +93,60 @@ class PhonebookGUI(tk.Frame):
         edit_window = tk.Toplevel(self.master)
         edit_window.title("Редактировать контакт")
 
-        # Отображение данных выбранного контакта для редактирования
-        name_label = tk.Label(edit_window, text="Имя:")
-        name_label.pack()
-        name_entry = tk.Entry(edit_window)
-        name_entry.insert(0, selected_contact["name"])
-        name_entry.pack()
+        fields = ["Имя", "Номер телефона", "Email", "Должность", "Компания"]
+        entries = []
 
-        phone_label = tk.Label(edit_window, text="Номер телефона:")
-        phone_label.pack()
-        phone_entry = tk.Entry(edit_window)
-        phone_entry.insert(0, selected_contact["phone_number"])
-        phone_entry.pack()
+        for field in fields:
+            label = tk.Label(edit_window, text=field + ":")
+            label.pack()
+            entry = tk.Entry(edit_window)
+            entry.insert(0, selected_contact[field.lower().replace(" ", "_")])
+            entry.pack()
+            entries.append(entry)
 
-        email_label = tk.Label(edit_window, text="Email:")
-        email_label.pack()
-        email_entry = tk.Entry(edit_window)
-        email_entry.insert(0, selected_contact["email"])
-        email_entry.pack()
-
-        job_label = tk.Label(edit_window, text="Должность:")
-        job_label.pack()
-        job_entry = tk.Entry(edit_window)
-        job_entry.insert(0, selected_contact["job_title"])
-        job_entry.pack()
-
-        company_label = tk.Label(edit_window, text="Компания:")
-        company_label.pack()
-        company_entry = tk.Entry(edit_window)
-        company_entry.insert(0, selected_contact["company"])
-        company_entry.pack()
-
-        save_button = tk.Button(edit_window, text="Сохранить", command=lambda: self.save_edited_contact(selected_contact["id"], name_entry.get(), phone_entry.get(), email_entry.get(), job_entry.get(), company_entry.get(), edit_window))
+        save_button = tk.Button(edit_window, text="Сохранить", command=lambda: self.save_edited_contact(selected_contact["id"], [entry.get() for entry in entries], edit_window))
         save_button.pack()
+
+    def show_contact_view_window(self):
+        # Логика отображения окна просмотра контактов
+        view_window = tk.Toplevel(self.master)
+        view_window.title("Просмотр контактов")
+
+        # Получение всех контактов для отображения
+        contacts = self.data_handler.get_all_contacts()
+
+        # Создание текстового виджета для отображения контактов
+        contact_text = tk.Text(view_window)
+        contact_text.pack()
+
+        # Заполнение текстового виджета информацией о контактах
+        for contact in contacts:
+            contact_text.insert(tk.END, f"Имя: {contact['name']}\n")
+            contact_text.insert(tk.END, f"Номер телефона: {contact['phone_number']}\n")
+            contact_text.insert(tk.END, f"Email: {contact['email']}\n")
+            contact_text.insert(tk.END, f"Должность: {contact['job_title']}\n")
+            contact_text.insert(tk.END, f"Компания: {contact['company']}\n\n")
 
     def delete_contact(self):
         # Логика удаления контакта
         selected_contact = self.contact_listbox.get(tk.ACTIVE)  # Получение выбранного контакта
         contact_id = selected_contact["id"]  # Предполагается, что у контакта есть поле 'id'
         self.data_handler.delete_contact(contact_id)
-        # Реализация логики удаления выбранного контакта
+        self.update_contact_list()
 
-    def save_contact(self, name, phone_number, email, job_title, company, add_window):
+    def save_contact(self, contact_data, add_window):
         # Логика сохранения нового контакта
-        new_contact = {"name": name, "phone_number": phone_number, "email": email, "job_title": job_title, "company": company}
+        new_contact = {field.lower().replace(" ", "_"): data for field, data in zip(["Имя", "Номер телефона", "Email", "Должность", "Компания"], contact_data)}
         self.data_handler.add_contact(new_contact)
         add_window.destroy()  # Закрыть окно добавления контакта после сохранения
-        # Реализация логики сохранения нового контакта
+        self.update_contact_list()
 
-    def save_edited_contact(self, contact_id, name, phone_number, email, job_title, company, edit_window):
+    def save_edited_contact(self, contact_id, contact_data, edit_window):
         # Логика сохранения отредактированного контакта
-        edited_contact = {"name": name, "phone_number": phone_number, "email": email, "job_title": job_title, "company": company}
+        edited_contact = {field.lower().replace(" ", "_"): data for field, data in zip(["Имя", "Номер телефона", "Email", "Должность", "Компания"], contact_data)}
         self.data_handler.update_contact(contact_id, edited_contact)
         edit_window.destroy()  # Закрыть окно редактирования контакта после сохранения
-        # Реализация логики сохранения отредактированного контакта
+        self.update_contact_list()
 
     def update_contact_list(self):
         # Обновление списка контактов в GUI
